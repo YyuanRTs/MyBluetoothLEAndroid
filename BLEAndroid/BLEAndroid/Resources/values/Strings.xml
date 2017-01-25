@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="Hello">Hello World, Click Me!</string>
+    <string name="ApplicationName">BLEAndroid</string>
+    <string name="Send">Send</string>
+  <string name="Search">Search</string>
+  <string name="Save">Save</string>
+</resources>
