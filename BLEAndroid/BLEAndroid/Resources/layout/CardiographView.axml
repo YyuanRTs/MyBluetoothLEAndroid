@@ -3,9 +3,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <BLEAndroid.CardiographView
+      android:id="@+id/background"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
     <BLEAndroid.PathView
+      android:id="@+id/path"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 </RelativeLayout>
