@@ -131,6 +131,9 @@ namespace BLEAndroid
 			// aapt resource value: 0x7f040002
 			public const int Send = 2130968578;
 			
+			// aapt resource value: 0x7f040005
+			public const int error_bluetooth_not_supported = 2130968581;
+			
 			static String()
 			{
 				global::Android.Runtime.ResourceIdManager.UpdateIdValues();

@@ -5,4 +5,5 @@
     <string name="Send">Send</string>
   <string name="Search">Search</string>
   <string name="Save">Save</string>
+  <string name="error_bluetooth_not_supported">error_bluetooth_not_supported</string> 
 </resources>
