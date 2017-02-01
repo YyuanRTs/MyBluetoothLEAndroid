@@ -22,8 +22,9 @@ namespace BLEAndroid
     public class MainActivity : Activity
     {
         // about _Y_listview
-        private ListView mListView;
-        private List<ListItem> mList;
+        private ListView mListDeviceView;
+        private List<mDeviceClass> mListDevice;
+        private CardiographAdapter mCardiographAdapter;
         private bool isSearching = false;
         protected ListView _listView;
         protected ScanButton _scanButton;
@@ -50,9 +51,10 @@ namespace BLEAndroid
             this._listAdapter = new DevicesAdapter(this, BluetoothLEManager.Current.DiscoveredDevices);
             this._listView.Adapter = this._listAdapter;
             // about _Z_listview 
-            mListView = (ListView)FindViewById(Resource.Id.deviceList);
-            mList = new List<ListItem>();
-            //MainLi
+            mListDeviceView = (ListView)FindViewById(Resource.Id.deviceList);
+            mListDevice = new List<mDeviceClass>();
+            mCardiographAdapter = new CardiographAdapter(this, mListDevice);
+            mListDeviceView.Adapter = mCardiographAdapter;
         }
 
         public void button1_onClick()
@@ -88,15 +90,15 @@ namespace BLEAndroid
             this._scanButton.Click += (object sender, EventArgs e) => {
                 if (!BluetoothLEManager.Current.IsScanning)
                 {
-                    BluetoothLEManager.Current.BeginScanningForDevices();
-                    mListView.Visibility = ViewStates.Invisible;
+                    mListDeviceView.Visibility = ViewStates.Invisible;
                     _listView.Visibility = ViewStates.Visible;
+                    BluetoothLEManager.Current.BeginScanningForDevices();
                 }
                 else
                 {
-                    BluetoothLEManager.Current.StopScanningForDevices();
-                    mListView.Visibility = ViewStates.Visible;
+                    mListDeviceView.Visibility = ViewStates.Visible;
                     _listView.Visibility = ViewStates.Invisible;
+                    BluetoothLEManager.Current.StopScanningForDevices();
                 }
             };
 
@@ -117,7 +119,6 @@ namespace BLEAndroid
                 this._deviceToConnect = this._listAdapter.Items[e.Position];
 
                 // show a connecting overlay
-                // TODO: make this conform to lifecycle, see: https://github.com/xamarin/private-samples/blob/master/EvolveCurriculum/Advanced/10%20-%20Advanced%20Android%20Application%20Lifecycle/ActivityLifecycle/MainActivity.cs
                 this.RunOnUiThread(() => {
                     //TODO: we need to save a ref to the device when click
                     this._progress = ProgressDialog.Show(this, "Connecting", "Connecting to " + this._deviceToConnect.Name, true);

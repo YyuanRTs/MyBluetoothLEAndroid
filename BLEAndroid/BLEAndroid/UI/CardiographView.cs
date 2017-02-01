@@ -24,7 +24,7 @@ namespace BLEAndroid
         protected int mWidth, mHeight;
         protected int mGridWidth = 50;
         protected int mSGridWidth = 10;
-        protected Path mPath;
+        public Path mPath;
         public CardiographView(Context context, IAttributeSet attrs) :
             base(context, attrs)
         {
