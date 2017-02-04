@@ -8,50 +8,58 @@
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_weight="1">
-        <Button
+        <BLEAndroid.ScanButton
             android:text="@string/Search"
+            android:layout_margin="5dip"
             android:layout_weight="1"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:id="@+id/searchbutton" />
         <Button
             android:text="@string/Save"
+            android:layout_margin="5dip"
             android:layout_weight="1"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:id="@+id/savebutton" />
     </LinearLayout>
     <RelativeLayout
         android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_weight="8">
-      <ListView
-          android:minWidth="25px"
-          android:minHeight="25px"
-          android:layout_width="match_parent"
-          android:id="@+id/deviceList">
-        
-      </ListView>
-      <ListView
-          android:layout_width="match_parent"
-          android:id="@+id/searchList">
-      </ListView>
-        
+        <ListView
+            android:minWidth="25px"
+            android:minHeight="25px"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/deviceList" 
+            android:visibility="visible"/>
+        <ListView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/searchList" 
+            android:visibility="gone"/>
     </RelativeLayout>
     <LinearLayout
         android:orientation="horizontal"
         android:layout_weight="1"
+        android:layout_height="wrap_content"
         android:layout_width="match_parent">
         <EditText
             android:layout_margin="2dip"
-            android:layout_weight="1"
+            android:layout_weight="3"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:background="#ffffffff"
             android:id="@+id/text1" />
-        <Button
-            android:text="@string/Send"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:id="@+id/button1"
-            android:clickable="true"
-            android:onClick="button1_onClick" />
+      <Button
+          android:text="@string/Send"
+          android:layout_weight="1"
+          android:layout_width="wrap_content"
+          android:layout_height="match_parent"
+          android:id="@+id/SendButton"
+          android:clickable="true"/>
     </LinearLayout>
 </LinearLayout>

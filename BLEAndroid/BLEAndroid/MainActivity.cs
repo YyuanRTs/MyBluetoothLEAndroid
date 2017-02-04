@@ -51,13 +51,13 @@ namespace BLEAndroid
             this._listAdapter = new DevicesAdapter(this, BluetoothLEManager.Current.DiscoveredDevices);
             this._listView.Adapter = this._listAdapter;
             // about _Z_listview 
-            mListDeviceView = (ListView)FindViewById(Resource.Id.deviceList);
-            mListDevice = new List<mDeviceClass>();
-            mCardiographAdapter = new CardiographAdapter(this, mListDevice);
-            mListDeviceView.Adapter = mCardiographAdapter;
+            this.mListDeviceView = (ListView)FindViewById(Resource.Id.deviceList);
+            this.mListDevice = new List<mDeviceClass>();
+            this.mCardiographAdapter = new CardiographAdapter(this, mListDevice);
+            this.mListDeviceView.Adapter = mCardiographAdapter;
         }
 
-        public void button1_onClick()
+        public void SendButton_Click()
         {
             EditText et = (EditText)FindViewById(Resource.Id.text1);
             //////
@@ -90,14 +90,14 @@ namespace BLEAndroid
             this._scanButton.Click += (object sender, EventArgs e) => {
                 if (!BluetoothLEManager.Current.IsScanning)
                 {
-                    mListDeviceView.Visibility = ViewStates.Invisible;
+                    mListDeviceView.Visibility = ViewStates.Gone;
                     _listView.Visibility = ViewStates.Visible;
                     BluetoothLEManager.Current.BeginScanningForDevices();
                 }
                 else
                 {
                     mListDeviceView.Visibility = ViewStates.Visible;
-                    _listView.Visibility = ViewStates.Invisible;
+                    _listView.Visibility = ViewStates.Gone;
                     BluetoothLEManager.Current.StopScanningForDevices();
                 }
             };
@@ -126,7 +126,9 @@ namespace BLEAndroid
 
                 // try and connect
                 BluetoothLEManager.Current.ConnectToDevice(this._listAdapter[e.Position]);
-
+                var newBluetoothDevice = BluetoothLEManager.Current.MConnectToDevice(this._listAdapter[e.Position]);
+                mListDevice.Add(newBluetoothDevice);
+                newBluetoothDevice.DeviceDisconnected += (o, ee) => { mListDevice.Remove(newBluetoothDevice); };
             };
         }
 

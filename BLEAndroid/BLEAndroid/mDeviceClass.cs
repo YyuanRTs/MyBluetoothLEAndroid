@@ -13,10 +13,11 @@ using Android.Bluetooth;
 using Java.Util;
 using Android.Graphics;
 using Java.Text;
+using static BLEAndroid.BluetoothLEManager;
 
 namespace BLEAndroid
 {
-    class mDeviceClass
+    public class mDeviceClass
     {
         BluetoothAdapter localAdapter = BluetoothAdapter.DefaultAdapter;
         BluetoothDevice mBluetoothDevice;
@@ -26,7 +27,8 @@ namespace BLEAndroid
         BluetoothGattService mService;
         IList<BluetoothGattCharacteristic> mCharacteristics;
         BluetoothGattCharacteristic mCharacteristic;
-        
+        public event EventHandler<DeviceConnectionEventArgs> DeviceConnected = delegate { };
+        public event EventHandler<DeviceConnectionEventArgs> DeviceDisconnected = delegate { };
         public Path mPath;
         public int count;
         public float distance=(float)20;
@@ -37,7 +39,7 @@ namespace BLEAndroid
         {
             mBluetoothDevice = BD;
             _GattCallback = new mGattCallback(this);
-            mBluetoothGatt = mBluetoothDevice.ConnectGatt(Application.Context, false, _GattCallback);
+            mBluetoothGatt = mBluetoothDevice.ConnectGatt(Application.Context, true, _GattCallback);
             mServices = mBluetoothGatt.Services;
             foreach (var item in mServices)
             {
@@ -101,6 +103,39 @@ namespace BLEAndroid
                 base.OnCharacteristicChanged(gatt, characteristic);
                 _string=characteristic.GetStringValue(0);
                 _parent.AddString(_string);
+            }
+
+            public override void OnConnectionStateChange(BluetoothGatt gatt, GattStatus status, ProfileState newState)
+            {
+                Console.WriteLine("OnConnectionStateChange: ");
+                base.OnConnectionStateChange(gatt, status, newState);
+
+                switch (newState)
+                {
+                    // disconnected
+                    case ProfileState.Disconnected:
+                        Console.WriteLine("disconnected");
+                        //TODO/BUG: Need to remove this, but can't remove the key (uncomment and see bug on disconnect)
+                        //					if (this._parent._connectedDevices.ContainsKey (gatt.Device))
+                        //						this._parent._connectedDevices.Remove (gatt.Device);
+                        this._parent.DeviceDisconnected(this, new DeviceConnectionEventArgs() { Device = gatt.Device });
+                        break;
+                    // connecting
+                    case ProfileState.Connecting:
+                        Console.WriteLine("Connecting");
+                        break;
+                    // connected
+                    case ProfileState.Connected:
+                        Console.WriteLine("Connected");
+                        //TODO/BUGBUG: need to remove this when disconnected
+                        //this._parent._connectedDevices.Add(gatt.Device, gatt);
+                        //this._parent.DeviceConnected(this, new DeviceConnectionEventArgs() { Device = gatt.Device });
+                        break;
+                    // disconnecting
+                    case ProfileState.Disconnecting:
+                        Console.WriteLine("Disconnecting");
+                        break;
+                }
             }
         }
     }

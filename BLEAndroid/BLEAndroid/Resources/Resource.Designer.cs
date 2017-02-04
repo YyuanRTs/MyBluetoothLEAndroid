@@ -60,11 +60,11 @@ namespace BLEAndroid
 		public partial class Id
 		{
 			
+			// aapt resource value: 0x7f050007
+			public const int SendButton = 2131034119;
+			
 			// aapt resource value: 0x7f050000
 			public const int background = 2131034112;
-			
-			// aapt resource value: 0x7f050007
-			public const int button1 = 2131034119;
 			
 			// aapt resource value: 0x7f050004
 			public const int deviceList = 2131034116;

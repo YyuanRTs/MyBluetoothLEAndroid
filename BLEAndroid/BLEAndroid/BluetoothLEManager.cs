@@ -170,6 +170,11 @@ namespace BLEAndroid
             device.ConnectGatt(Android.App.Application.Context, true, this._gattCallback);
         }
 
+        public mDeviceClass MConnectToDevice(BluetoothDevice device)
+        {
+            return new mDeviceClass(device);
+        }
+
         public void DisconnectDevice(BluetoothDevice device)
         {
             this.ConnectedDevices[device].Disconnect();
