@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
+using System.Threading.Tasks;
 using Android.App;
 using Android.Content;
 using Android.OS;
@@ -25,6 +25,8 @@ namespace BLEAndroid
         protected int mGridWidth = 50;
         protected int mSGridWidth = 10;
         public Path mPath;
+        private Context context;
+
         public CardiographView(Context context, IAttributeSet attrs) :
             base(context, attrs)
         {
@@ -33,6 +35,11 @@ namespace BLEAndroid
 
         public CardiographView(Context context, IAttributeSet attrs, int defStyle) :
             base(context, attrs, defStyle)
+        {
+            Initialize();
+        }
+
+        public CardiographView(Context context) : base(context)
         {
             Initialize();
         }
@@ -93,6 +100,7 @@ namespace BLEAndroid
 
     public class PathView : CardiographView
     {
+        public float XPosition;
         public PathView(Context context, IAttributeSet attrs) :
             base(context, attrs)
         {
@@ -105,36 +113,51 @@ namespace BLEAndroid
             Initialize();
         }
 
+        public PathView(Context context): base(context)
+        {
+            Initialize();
+        }
+
         private void Initialize()
         {
             mPaint = new Paint();
-            mPath = new Path();
+            //mPath = new Path();
         }
 
         private void drawPath(Canvas canvas)
         {
-            mPath.Reset();
-            mPath.MoveTo(0, mHeight / 2);
-            int temp = 0;
-            for (int i = 0; i < 10; i++)
-            {
-                mPath.LineTo(temp + 20, 100);
-                mPath.LineTo(temp + 70, mHeight / 2 + 50);
-                mPath.LineTo(temp + 80, mHeight / 2);
-                mPath.LineTo(temp + 200, mHeight / 2);
-                temp += 200;
-            }
+            if (mPath == null) mPath = new Path();
+            //mPath.Reset();
+            //mPath.MoveTo(0, mHeight / 2);
+            //int temp = 0;
+            //for (int i = 0; i < 10; i++)
+            //{
+            //    mPath.LineTo(temp + 20, 100);
+            //    mPath.LineTo(temp + 70, mHeight / 2 + 50);
+            //    mPath.LineTo(temp + 80, mHeight / 2);
+            //    mPath.LineTo(temp + 200, mHeight / 2);
+            //    temp += 200;
+            //}
+            //Console.WriteLine(mPath.IsEmpty ? "empty" : "not empty");
             mPaint.SetStyle(Paint.Style.Stroke);
             mPaint.Color = mLineColor;
             mPaint.StrokeWidth = 5;
+            //canvas.Scale(1, 4000 / canvas.Height);
+            //canvas.Density = 20;
+            //Console.WriteLine(canvas.Density);
+            //Console.WriteLine(canvas.Height);
+            //Console.WriteLine(canvas.MaximumBitmapHeight);
+            //Console.WriteLine(canvas.MaximumBitmapWidth);
             canvas.DrawPath(mPath, mPaint);
         }
 
         protected override void OnDraw(Canvas canvas)
         {
+            
+            PostInvalidateDelayed(50);
             drawPath(canvas);
-            ScrollBy(1, 0);
-            PostInvalidateDelayed(10);
+            ScrollTo((int)XPosition , 0);
+            Console.WriteLine(XPosition);
         }
     }
 }

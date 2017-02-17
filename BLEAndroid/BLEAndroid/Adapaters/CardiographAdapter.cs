@@ -30,6 +30,7 @@ namespace BLEAndroid
             }
 
             view.FindViewById<PathView>(Resource.Id.path).mPath = items[position].mPath;
+            view.FindViewById<PathView>(Resource.Id.path).XPosition = items[position].count * items[position].distance;
             return view;
         }
     }

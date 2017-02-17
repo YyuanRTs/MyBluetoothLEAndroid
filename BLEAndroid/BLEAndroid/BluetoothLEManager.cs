@@ -113,15 +113,15 @@ namespace BLEAndroid
             _adapter.StartLeScan(this);
             
             // in 10 seconds, stop the scan
-            await Task.Delay(10000);
+            //await Task.Delay(10000);
 
-            // if we're still scanning
-            if (this._isScanning)
-            {
-                Console.WriteLine("BluetoothLEManager: Scan timeout has elapsed.");
-                this._adapter.StopLeScan(this);
-                this.ScanTimeoutElapsed(this, new EventArgs());
-            }
+            //// if we're still scanning
+            //if (this._isScanning)
+            //{
+            //    Console.WriteLine("BluetoothLEManager: Scan timeout has elapsed.");
+            //    this._adapter.StopLeScan(this);
+            //    this.ScanTimeoutElapsed(this, new EventArgs());
+            //}
         }
 
         /// <summary>
@@ -172,7 +172,8 @@ namespace BLEAndroid
 
         public mDeviceClass MConnectToDevice(BluetoothDevice device)
         {
-            return new mDeviceClass(device);
+            var mdc = new mDeviceClass(device);
+            return mdc;
         }
 
         public void DisconnectDevice(BluetoothDevice device)

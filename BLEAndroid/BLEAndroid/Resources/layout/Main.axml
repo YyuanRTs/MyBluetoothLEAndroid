@@ -46,14 +46,19 @@
         android:orientation="horizontal"
         android:layout_weight="1"
         android:layout_height="wrap_content"
-        android:layout_width="match_parent">
+        android:layout_width="match_parent"
+        android:focusable="true"
+        android:focusableInTouchMode="true">
         <EditText
             android:layout_margin="2dip"
             android:layout_weight="3"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:background="#ffffffff"
-            android:id="@+id/text1" />
+            android:textColor="#ff000000"
+            android:id="@+id/text1" 
+            android:imeOptions="actionSearch"
+            android:singleLine="true"/>
       <Button
           android:text="@string/Send"
           android:layout_weight="1"

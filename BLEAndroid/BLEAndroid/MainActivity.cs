@@ -15,6 +15,7 @@ using Android.Bluetooth.LE;
 using Android.Bluetooth;
 using Android.Util;
 using System.Threading.Tasks;
+//using Java.IO;
 
 namespace BLEAndroid
 {
@@ -28,6 +29,8 @@ namespace BLEAndroid
         private bool isSearching = false;
         protected ListView _listView;
         protected ScanButton _scanButton;
+        protected Button _sendButton;
+        protected Button _saveButton;
         protected DevicesAdapter _listAdapter;
         protected ProgressDialog _progress;
         protected BluetoothDevice _deviceToConnect; //not using State.SelectedDevice because it may not be connected yet
@@ -46,7 +49,9 @@ namespace BLEAndroid
 
             this._listView = FindViewById<ListView>(Resource.Id.searchList);
             this._scanButton = FindViewById<ScanButton>(Resource.Id.searchbutton);
-
+            this._sendButton = FindViewById<Button>(Resource.Id.SendButton);
+            _sendButton.Click += _sendButton_Click;
+            //_saveButton.Click += _saveButton_Click;
             // create our list adapter
             this._listAdapter = new DevicesAdapter(this, BluetoothLEManager.Current.DiscoveredDevices);
             this._listView.Adapter = this._listAdapter;
@@ -57,11 +62,28 @@ namespace BLEAndroid
             this.mListDeviceView.Adapter = mCardiographAdapter;
         }
 
-        public void SendButton_Click()
+        private void _saveButton_Click(object sender, EventArgs e)
         {
-            EditText et = (EditText)FindViewById(Resource.Id.text1);
-            //////
+            ////File file = getFilesDir();
+            //Date date = new Date();
+            //File file = new File(,date.ToString());
+            //OpenFileOutput()
         }
+
+        private void _sendButton_Click(object sender, EventArgs e)
+        {
+            EditText et = FindViewById<EditText>(Resource.Id.text1);
+            string tmp = et.Text;
+            foreach (var item in mListDevice)
+            {
+                item.SendMessage(tmp);
+                Console.WriteLine($"send {tmp} to {item.mBluetoothGatt.Device.Name}");
+            }
+            Console.WriteLine("SendTask Finished");
+            et.Text = "";
+        }
+
+
 
         // about _Y_BLE
 
@@ -87,30 +109,38 @@ namespace BLEAndroid
 
         protected void WireupLocalHandlers()
         {
-            this._scanButton.Click += (object sender, EventArgs e) => {
-                if (!BluetoothLEManager.Current.IsScanning)
+            this._scanButton.Click += (object sender, EventArgs e) =>
+            {
+                if (!isSearching)
                 {
                     mListDeviceView.Visibility = ViewStates.Gone;
                     _listView.Visibility = ViewStates.Visible;
                     BluetoothLEManager.Current.BeginScanningForDevices();
+                    isSearching = true;
                 }
                 else
                 {
                     mListDeviceView.Visibility = ViewStates.Visible;
                     _listView.Visibility = ViewStates.Gone;
                     BluetoothLEManager.Current.StopScanningForDevices();
+                    isSearching = false;
                 }
             };
 
-            this._listView.ItemClick += (object sender, AdapterView.ItemClickEventArgs e) => {
-                Console.Write("ItemClick: " + this._listAdapter.Items[e.Position]);
 
+            this._listView.ItemClick += (object sender, AdapterView.ItemClickEventArgs e) =>
+            {
+                Console.Write("ItemClick: " + this._listAdapter.Items[e.Position]);
+                mListDeviceView.Visibility = ViewStates.Visible;
+                isSearching = false;
+                _listView.Visibility = ViewStates.Gone;
                 // stop scanning
                 this.StopScanning();
 
                 // select the item
                 this._listView.ClearFocus();
-                this._listView.Post(() => {
+                this._listView.Post(() =>
+                {
                     this._listView.SetSelection(e.Position);
                 });
                 //this._listView.SetItemChecked (e.Position, true);
@@ -119,42 +149,57 @@ namespace BLEAndroid
                 this._deviceToConnect = this._listAdapter.Items[e.Position];
 
                 // show a connecting overlay
-                this.RunOnUiThread(() => {
-                    //TODO: we need to save a ref to the device when click
-                    this._progress = ProgressDialog.Show(this, "Connecting", "Connecting to " + this._deviceToConnect.Name, true);
-                });
+                //this.RunOnUiThread(() => {
+                //    //TODO: we need to save a ref to the device when click
+                //    this._progress = ProgressDialog.Show(this, "Connecting", "Connecting to " + this._deviceToConnect.Name, true);
+                //});
 
                 // try and connect
-                BluetoothLEManager.Current.ConnectToDevice(this._listAdapter[e.Position]);
+                //BluetoothLEManager.Current.ConnectToDevice(this._listAdapter[e.Position]);
                 var newBluetoothDevice = BluetoothLEManager.Current.MConnectToDevice(this._listAdapter[e.Position]);
-                mListDevice.Add(newBluetoothDevice);
-                newBluetoothDevice.DeviceDisconnected += (o, ee) => { mListDevice.Remove(newBluetoothDevice); };
+                if (newBluetoothDevice != null)
+                {
+                    newBluetoothDevice.DeviceDisconnected += (o, ee) => { mListDevice.Remove(newBluetoothDevice); };
+                    newBluetoothDevice.CharacteristicChanged += (o, ee) => { mCardiographAdapter.NotifyDataSetChanged();  };
+                    mListDevice.Add(newBluetoothDevice);
+                    Console.WriteLine("add a new device");
+                    this.mCardiographAdapter = new CardiographAdapter(this, this.mListDevice);
+                }
+                else
+                {
+                    Console.WriteLine("return null");
+                }
             };
         }
+        
 
         protected void WireupExternalHandlers()
         {
-            this.deviceDiscoveredHandler = (object sender, BluetoothLEManager.DeviceDiscoveredEventArgs e) => {
+            this.deviceDiscoveredHandler = (object sender, BluetoothLEManager.DeviceDiscoveredEventArgs e) =>
+            {
                 Console.WriteLine("Discovered device: " + e.Device.Name);
 
                 // reload the list view
                 //TODO: why doens't NotifyDataSetChanged work? is it because i'm replacing the reference?
-                this.RunOnUiThread(() => {
+                this.RunOnUiThread(() =>
+                {
                     this._listAdapter = new DevicesAdapter(this, BluetoothLEManager.Current.DiscoveredDevices);
                     this._listView.Adapter = this._listAdapter;
                 });
             };
             BluetoothLEManager.Current.DeviceDiscovered += this.deviceDiscoveredHandler;
 
-            this.deviceConnectedHandler = (object sender, BluetoothLEManager.DeviceConnectionEventArgs e) => {
-                this.RunOnUiThread(() => {
+            this.deviceConnectedHandler = (object sender, BluetoothLEManager.DeviceConnectionEventArgs e) =>
+            {
+                this.RunOnUiThread(() =>
+                {
                     this._progress.Hide();
                 });
                 // now that we're connected, save it
                 App.Current.State.SelectedDevice = e.Device;
 
                 // launch the details screen
-                this.StartActivity(typeof(DeviceDetailsScreen));
+                //this.StartActivity(typeof(DeviceDetailsScreen));
             };
             BluetoothLEManager.Current.DeviceConnected += this.deviceConnectedHandler;
         }
@@ -168,7 +213,8 @@ namespace BLEAndroid
         protected void StopScanning()
         {
             // stop scanning
-            new Task(() => {
+            new Task(() =>
+            {
                 if (BluetoothLEManager.Current.IsScanning)
                 {
                     Console.WriteLine("Still scanning, stopping the scan and reseting the right button");
@@ -177,8 +223,8 @@ namespace BLEAndroid
                 }
             }).Start();
         }
-    
-        
+
+
     }
 
 

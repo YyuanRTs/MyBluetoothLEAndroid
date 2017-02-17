@@ -5,7 +5,7 @@
     <BLEAndroid.CardiographView
         android:id="@+id/background"
         android:layout_width="match_parent"
-        android:layout_height="200dip"/>
+        android:layout_height="200dip" />
     <BLEAndroid.PathView
         android:id="@+id/path"
         android:layout_width="match_parent"
