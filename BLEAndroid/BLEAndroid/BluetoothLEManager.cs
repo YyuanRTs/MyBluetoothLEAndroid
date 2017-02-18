@@ -103,7 +103,7 @@ namespace BLEAndroid
 
         public async Task BeginScanningForDevices()
         {
-            Console.WriteLine("BluetoothLEManager: Starting a scan for devices.");
+            //Console.WriteLine("BluetoothLEManager: Starting a scan for devices.");
 
             // clear out the list
             this._discoveredDevices = new List<BluetoothDevice>();
@@ -130,7 +130,7 @@ namespace BLEAndroid
         /// </summary>
         public void StopScanningForDevices()
         {
-            Console.WriteLine("BluetoothLEManager: Stopping the scan for devices.");
+            //Console.WriteLine("BluetoothLEManager: Stopping the scan for devices.");
             this._isScanning = false;
             this._adapter.StopLeScan(this);
             
@@ -138,7 +138,7 @@ namespace BLEAndroid
 
         public void OnLeScan(BluetoothDevice device, int rssi, byte[] scanRecord)
         {
-            Console.WriteLine("LeScanCallback: " + device.Name);
+            //Console.WriteLine("LeScanCallback: " + device.Name);
             // TODO: for some reason, this doesn't work, even though they have the same pointer,
             // it thinks that the item doesn't exist. so i had to write my own implementation
             //			if(!this._discoveredDevices.Contains(device) ) {
@@ -239,14 +239,14 @@ namespace BLEAndroid
 
             public override void OnConnectionStateChange(BluetoothGatt gatt, GattStatus status, ProfileState newState)
             {
-                Console.WriteLine("OnConnectionStateChange: ");
+                //Console.WriteLine("OnConnectionStateChange: ");
                 base.OnConnectionStateChange(gatt, status, newState);
 
                 switch (newState)
                 {
                     // disconnected
                     case ProfileState.Disconnected:
-                        Console.WriteLine("disconnected");
+                        //Console.WriteLine("disconnected");
                         //TODO/BUG: Need to remove this, but can't remove the key (uncomment and see bug on disconnect)
                         //					if (this._parent._connectedDevices.ContainsKey (gatt.Device))
                         //						this._parent._connectedDevices.Remove (gatt.Device);
@@ -254,18 +254,18 @@ namespace BLEAndroid
                         break;
                     // connecting
                     case ProfileState.Connecting:
-                        Console.WriteLine("Connecting");
+                        //Console.WriteLine("Connecting");
                         break;
                     // connected
                     case ProfileState.Connected:
-                        Console.WriteLine("Connected");
+                        //Console.WriteLine("Connected");
                         //TODO/BUGBUG: need to remove this when disconnected
                         this._parent._connectedDevices.Add(gatt.Device, gatt);
                         this._parent.DeviceConnected(this, new DeviceConnectionEventArgs() { Device = gatt.Device });
                         break;
                     // disconnecting
                     case ProfileState.Disconnecting:
-                        Console.WriteLine("Disconnecting");
+                        //Console.WriteLine("Disconnecting");
                         break;
                 }
             }
@@ -274,7 +274,7 @@ namespace BLEAndroid
             {
                 base.OnServicesDiscovered(gatt, status);
 
-                Console.WriteLine("OnServicesDiscovered: " + status.ToString());
+                //Console.WriteLine("OnServicesDiscovered: " + status.ToString());
 
                 //TODO: somehow, we need to tie this directly to the device, rather than for all
                 // google's API deisgners are children.

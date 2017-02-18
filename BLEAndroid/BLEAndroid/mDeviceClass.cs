@@ -70,7 +70,7 @@ namespace BLEAndroid
         private void MDeviceClass_ServiceDiscovered(object sender, ServiceDiscoveredEventArgs e)
         {
             mServices = mBluetoothGatt.Services;
-            foreach (var item in mServices) Console.WriteLine(item.Uuid);
+            //foreach (var item in mServices) Console.WriteLine(item.Uuid);
             foreach (var item in mServices)
             {
                 if (item.Uuid.ToString() == "0000ffe0-0000-1000-8000-00805f9b34fb")
@@ -97,12 +97,12 @@ namespace BLEAndroid
                 }
                 else
                 {
-                    Console.WriteLine("characteristic not found");
+                    //Console.WriteLine("characteristic not found");
                 }
             }
             else
             {
-                Console.WriteLine("service not found");
+                //Console.WriteLine("service not found");
             }
         }
 
@@ -126,12 +126,12 @@ namespace BLEAndroid
                     int te = Convert.ToInt32(temp[i]);
                     if (te > 4095)
                     {
-                        Console.WriteLine($"{te} is toolarge");
+                        //Console.WriteLine($"{te} is toolarge");
                         te = 4095;
                     }
                     else if (te < 0)
                     {
-                        Console.WriteLine($"{te} is toosmall");
+                        //Console.WriteLine($"{te} is toosmall");
                         te = 0;
                     }
                    
@@ -180,14 +180,14 @@ namespace BLEAndroid
 
             public override void OnConnectionStateChange(BluetoothGatt gatt, GattStatus status, ProfileState newState)
             {
-                Console.WriteLine("OnConnectionStateChange: ");
+                //Console.WriteLine("OnConnectionStateChange: ");
                 base.OnConnectionStateChange(gatt, status, newState);
 
                 switch (newState)
                 {
                     // disconnected
                     case ProfileState.Disconnected:
-                        Console.WriteLine("disconnected");
+                        //Console.WriteLine("disconnected");
                         //TODO/BUG: Need to remove this, but can't remove the key (uncomment and see bug on disconnect)
                         //					if (this._parent._connectedDevices.ContainsKey (gatt.Device))
                         //						this._parent._connectedDevices.Remove (gatt.Device);
@@ -195,18 +195,18 @@ namespace BLEAndroid
                         break;
                     // connecting
                     case ProfileState.Connecting:
-                        Console.WriteLine("Connecting");
+                        //Console.WriteLine("Connecting");
                         break;
                     // connected
                     case ProfileState.Connected:
-                        Console.WriteLine("Connected");
+                        //Console.WriteLine("Connected");
                         //TODO/BUGBUG: need to remove this when disconnected
                         //this._parent._connectedDevices.Add(gatt.Device, gatt);
                         this._parent.DeviceConnected(this, new DeviceConnectionEventArgs() { Device = gatt.Device });
                         break;
                     // disconnecting
                     case ProfileState.Disconnecting:
-                        Console.WriteLine("Disconnecting");
+                        //Console.WriteLine("Disconnecting");
                         break;
                 }
             }
@@ -215,7 +215,7 @@ namespace BLEAndroid
             {
                 base.OnServicesDiscovered(gatt, status);
 
-                Console.WriteLine("OnServicesDiscovered: " + status.ToString());
+                //Console.WriteLine("OnServicesDiscovered: " + status.ToString());
 
                 //TODO: somehow, we need to tie this directly to the device, rather than for all
                 // google's API deisgners are children.

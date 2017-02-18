@@ -91,15 +91,22 @@ namespace BLEAndroid
 
         private void _sendButton_Click(object sender, EventArgs e)
         {
-            EditText et = FindViewById<EditText>(Resource.Id.text1);
-            string tmp = et.Text;
-            foreach (var item in mListDevice)
+            try
             {
-                item.SendMessage(tmp);
-                Console.WriteLine($"send {tmp} to {item.mBluetoothGatt.Device.Name}");
+                EditText et = FindViewById<EditText>(Resource.Id.text1);
+                string tmp = et.Text;
+                foreach (var item in mListDevice)
+                {
+                    item.SendMessage(tmp);
+                    //Console.WriteLine($"send {tmp} to {item.mBluetoothGatt.Device.Name}");
+                }
+                //Console.WriteLine("SendTask Finished");
+                et.Text = "";
             }
-            Console.WriteLine("SendTask Finished");
-            et.Text = "";
+            catch(Java.Lang.Exception d)
+            {
+                Title = d.ToString();
+            }
         }
 
 
@@ -149,7 +156,7 @@ namespace BLEAndroid
 
             this._listView.ItemClick += (object sender, AdapterView.ItemClickEventArgs e) =>
             {
-                Console.Write("ItemClick: " + this._listAdapter.Items[e.Position]);
+                //Console.Write("ItemClick: " + this._listAdapter.Items[e.Position]);
                 mListDeviceView.Visibility = ViewStates.Visible;
                 isSearching = false;
                 _listView.Visibility = ViewStates.Gone;
@@ -181,12 +188,12 @@ namespace BLEAndroid
                     newBluetoothDevice.DeviceDisconnected += (o, ee) => { mListDevice.Remove(newBluetoothDevice); };
                     //newBluetoothDevice.CharacteristicChanged += (o, ee) => { mCardiographAdapter.NotifyDataSetChanged();  };
                     mListDevice.Add(newBluetoothDevice);
-                    Console.WriteLine("add a new device");
+                    //Console.WriteLine("add a new device");
                     this.mCardiographAdapter = new CardiographAdapter(this, this.mListDevice);
                 }
                 else
                 {
-                    Console.WriteLine("return null");
+                    //Console.WriteLine("return null");
                 }
             };
         }
@@ -196,7 +203,7 @@ namespace BLEAndroid
         {
             this.deviceDiscoveredHandler = (object sender, BluetoothLEManager.DeviceDiscoveredEventArgs e) =>
             {
-                Console.WriteLine("Discovered device: " + e.Device.Name);
+                //Console.WriteLine("Discovered device: " + e.Device.Name);
 
                 // reload the list view
                 //TODO: why doens't NotifyDataSetChanged work? is it because i'm replacing the reference?
@@ -236,7 +243,7 @@ namespace BLEAndroid
             {
                 if (BluetoothLEManager.Current.IsScanning)
                 {
-                    Console.WriteLine("Still scanning, stopping the scan and reseting the right button");
+                    //Console.WriteLine("Still scanning, stopping the scan and reseting the right button");
                     BluetoothLEManager.Current.StopScanningForDevices();
                     this._scanButton.SetState(ScanButton.ScanButtonState.Normal);
                 }
