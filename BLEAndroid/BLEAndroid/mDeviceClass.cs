@@ -33,25 +33,32 @@ namespace BLEAndroid
         public event EventHandler<DeviceConnectionEventArgs> DeviceDisconnected = delegate { };
         public event EventHandler<ServiceDiscoveredEventArgs> ServiceDiscovered = delegate { };
         public event EventHandler<CharacteristicChangedEventArgs> CharacteristicChanged = delegate { };
-        public Path mPath;
+        public MyPath mPath;
         public int count;
         public float distance=(float)1;
         public string mString;
         public string tempString;
         public string saveString;
         public bool correct;
-        public mDeviceClass(BluetoothDevice BD)
+        //public int XPosition { get { return count * (int)distance; } }
+        public float hdensity;
+        public float scale;
+        public const int Heightdip=200;
+        public PathMeasure PM;
+        public mDeviceClass(BluetoothDevice BD,float Hdensity=3)
         {
+            hdensity = Hdensity;
+            scale =  (Heightdip * hdensity)/4096 ;
             correct = false;
             mBluetoothDevice = BD;
             _GattCallback = new mGattCallback(this);
             DeviceConnected += MDeviceClass_DeviceConnected;
             mBluetoothGatt = mBluetoothDevice.ConnectGatt(Application.Context, true, _GattCallback);
-            
+            mPath = new MyPath();
             //initialize
             
-            
-            
+
+
         }
 
         private void MDeviceClass_DeviceConnected(object sender, DeviceConnectionEventArgs e)
@@ -81,7 +88,7 @@ namespace BLEAndroid
                 if (mCharacteristic != null)
                 {
                     mBluetoothGatt.SetCharacteristicNotification(mCharacteristic, true);
-                    mPath = new Path();
+                    
                     mString = "";
                     tempString = "";
                     saveString = "";
@@ -105,21 +112,36 @@ namespace BLEAndroid
             //Console.WriteLine(tempString);
             mString += s;
             //Console.WriteLine(mString);
-            if (mPath.IsEmpty)
-            {
-                mPath.Reset();
-                mPath.MoveTo(0, 300);
-            }
+            //if (mPath.mPath.IsEmpty)
+            //{
+            //    mPath.mPath.Reset();
+            //    mPath.mPath.MoveTo(0, Heightdip * hdensity/2);
+            //}
             string[] temp = tempString.Split('\n');
             for (int i = 0; i < temp.Length-1; i++)
             {
                 //Console.WriteLine(temp[i]);
                 try
                 {
-                    mPath.LineTo(count * distance, Convert.ToInt32(temp[i])/6);
+                    int te = Convert.ToInt32(temp[i]);
+                    if (te > 4095)
+                    {
+                        Console.WriteLine($"{te} is toolarge");
+                        te = 4095;
+                    }
+                    else if (te < 0)
+                    {
+                        Console.WriteLine($"{te} is toosmall");
+                        te = 0;
+                    }
+                   
+                    mPath.path.Add(new Node() { X = count * distance, Y =(int) (Heightdip * hdensity - te * scale) });
+                    
+                    
+                    count += 1;
                 }
                 catch { }
-                count += 1;
+                
                 saveString += AppendStringForSave(temp[i]);
             }
             tempString = temp.Last();
@@ -217,5 +239,21 @@ namespace BLEAndroid
         public BluetoothGatt Gatt;
         public BluetoothGattCharacteristic Characteristic;
         public CharacteristicChangedEventArgs() : base() { }
+    }
+
+    public class MyPath
+    {
+        //public Path mPath;
+        //public float XPosition;
+        public List<Node> path;
+        public MyPath()
+        {
+            path = new List<Node>();
+        }
+    }
+    public class Node
+    {
+        public float X;
+        public int Y;
     }
 }

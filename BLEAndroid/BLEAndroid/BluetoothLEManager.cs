@@ -170,9 +170,9 @@ namespace BLEAndroid
             device.ConnectGatt(Android.App.Application.Context, true, this._gattCallback);
         }
 
-        public mDeviceClass MConnectToDevice(BluetoothDevice device)
+        public mDeviceClass MConnectToDevice(BluetoothDevice device,float hdip=3)
         {
-            var mdc = new mDeviceClass(device);
+            var mdc = new mDeviceClass(device,hdip);
             return mdc;
         }
 

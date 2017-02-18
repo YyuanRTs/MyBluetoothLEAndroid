@@ -29,8 +29,9 @@ namespace BLEAndroid
                 view = context.LayoutInflater.Inflate(resource, null);
             }
 
-            view.FindViewById<PathView>(Resource.Id.path).mPath = items[position].mPath;
-            view.FindViewById<PathView>(Resource.Id.path).XPosition = items[position].count * items[position].distance;
+            //view.FindViewById<PathView>(Resource.Id.path).mPath = items[position].mPath.mPath;
+            //view.FindViewById<PathView>(Resource.Id.path).XPosition = items[position].mPath.XPosition;
+            view.FindViewById<PathView>(Resource.Id.path).path = items[position].mPath;
             return view;
         }
     }

@@ -24,7 +24,7 @@ namespace BLEAndroid
         protected int mWidth, mHeight;
         protected int mGridWidth = 50;
         protected int mSGridWidth = 10;
-        public Path mPath;
+        //public Path mPath;
         private Context context;
 
         public CardiographView(Context context, IAttributeSet attrs) :
@@ -47,7 +47,7 @@ namespace BLEAndroid
         private void Initialize()
         {
             mPaint = new Paint();
-            mPath = new Path();
+            //mPath = new Path();
         }
 
         protected override void OnSizeChanged(int w, int h, int oldw, int oldh)
@@ -100,7 +100,10 @@ namespace BLEAndroid
 
     public class PathView : CardiographView
     {
-        public float XPosition;
+        //public float XPosition;
+        public MyPath path;
+        public Path mPath;
+        public int last;
         public PathView(Context context, IAttributeSet attrs) :
             base(context, attrs)
         {
@@ -121,12 +124,14 @@ namespace BLEAndroid
         private void Initialize()
         {
             mPaint = new Paint();
-            //mPath = new Path();
+            mPath = new Path();
+            last = 0;
         }
 
         private void drawPath(Canvas canvas)
         {
-            if (mPath == null) mPath = new Path();
+            //if (path.mPath == null) path.mPath = new Path();
+            
             //mPath.Reset();
             //mPath.MoveTo(0, mHeight / 2);
             //int temp = 0;
@@ -148,16 +153,35 @@ namespace BLEAndroid
             //Console.WriteLine(canvas.Height);
             //Console.WriteLine(canvas.MaximumBitmapHeight);
             //Console.WriteLine(canvas.MaximumBitmapWidth);
-            canvas.DrawPath(mPath, mPaint);
+            mPath.Reset();
+            int _count = path.path.Count();
+            //Console.WriteLine(_count);
+            if (_count > 0)
+            {
+                mPath.MoveTo(0, path.path[_count - mWidth >= 0 ? _count - mWidth : 0].Y);
+                int X=1;
+                for (int i = (_count - mWidth + 1>0? _count - mWidth + 1:1); i < _count; i++)
+                {
+                    mPath.LineTo(X, path.path[i].Y);
+                    X++;
+                }
+                canvas.DrawPath(mPath, mPaint);
+            }
         }
 
         protected override void OnDraw(Canvas canvas)
         {
             
-            PostInvalidateDelayed(50);
+            PostInvalidateDelayed(200);
             drawPath(canvas);
-            ScrollTo((int)XPosition , 0);
-            Console.WriteLine(XPosition);
+            //ScrollTo((int)path.path.Count()<mWidth?0: , 0);
+            //Console.WriteLine(XPosition);
+            //if(path.XPosition-last>1500)
+            //{
+            //    canvas.ClipRect(new Rect((int)path.XPosition - mWidth, 0, (int)path.XPosition, mHeight));
+            //    last = (int)path.XPosition;
+                
+            //}
         }
     }
 }

@@ -34,7 +34,12 @@ namespace BLEAndroid
         protected DevicesAdapter _listAdapter;
         protected ProgressDialog _progress;
         protected BluetoothDevice _deviceToConnect; //not using State.SelectedDevice because it may not be connected yet
-
+        protected float density;
+        protected DisplayMetricsDensity densityDpi;
+        protected int heightPixels;
+        protected int widthPixels;
+        protected float hdip;
+        protected float wdip;
         // external handlers
         EventHandler<BluetoothLEManager.DeviceDiscoveredEventArgs> deviceDiscoveredHandler;
         EventHandler<BluetoothLEManager.DeviceConnectionEventArgs> deviceConnectedHandler;
@@ -46,6 +51,20 @@ namespace BLEAndroid
 
             // Set our view from the "main" layout resource
             SetContentView(Resource.Layout.Main);
+
+            DisplayMetrics metric = new DisplayMetrics();
+            this.WindowManager.DefaultDisplay.GetMetrics(metric);
+            density = metric.Density;
+            //int width = metric.widthPixels;  // 屏幕宽度（像素）
+            //int height = metric.heightPixels;  // 屏幕高度（像素）
+            //float density = metric.density;  // 屏幕密度（0.75 / 1.0 / 1.5）
+            densityDpi = metric.DensityDpi;  // 屏幕密度DPI（120 / 160 / 240）
+            heightPixels = metric.HeightPixels;
+            widthPixels = metric.WidthPixels;
+            //hdip = heightPixels / density;
+            //wdip = widthPixels / density;
+            //Console.WriteLine($"{density},{heightPixels},{widthPixels},{hdip},{wdip}");
+
 
             this._listView = FindViewById<ListView>(Resource.Id.searchList);
             this._scanButton = FindViewById<ScanButton>(Resource.Id.searchbutton);
@@ -156,11 +175,11 @@ namespace BLEAndroid
 
                 // try and connect
                 //BluetoothLEManager.Current.ConnectToDevice(this._listAdapter[e.Position]);
-                var newBluetoothDevice = BluetoothLEManager.Current.MConnectToDevice(this._listAdapter[e.Position]);
+                var newBluetoothDevice = BluetoothLEManager.Current.MConnectToDevice(this._listAdapter[e.Position],density);
                 if (newBluetoothDevice != null)
                 {
                     newBluetoothDevice.DeviceDisconnected += (o, ee) => { mListDevice.Remove(newBluetoothDevice); };
-                    newBluetoothDevice.CharacteristicChanged += (o, ee) => { mCardiographAdapter.NotifyDataSetChanged();  };
+                    //newBluetoothDevice.CharacteristicChanged += (o, ee) => { mCardiographAdapter.NotifyDataSetChanged();  };
                     mListDevice.Add(newBluetoothDevice);
                     Console.WriteLine("add a new device");
                     this.mCardiographAdapter = new CardiographAdapter(this, this.mListDevice);
